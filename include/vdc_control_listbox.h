@@ -16,6 +16,12 @@
 #define CONTROLTYPE_LISTBOX		4		//Should be unique across all controls
 
 typedef struct _LISTBOX LISTBOX;
+typedef struct _LISTITEM LISTITEM;
+
+struct _LISTITEM
+{
+	BUFFER *text;
+};
 
 struct _LISTBOX
 {
@@ -23,14 +29,14 @@ struct _LISTBOX
 	BYTE width;
 	BYTE height;
 	BYTE itemCount;
-	BUFFER items;
 	BYTE selectedItem;
-	
+	LISTITEM *listitems;
+
 	//Event delegates
 	void (*OnChanged)(LISTBOX *listBox);
 };
 
-LISTBOX* CreateListbox(WINDOW *window, BUFFER name, BYTE x, BYTE y, BYTE width, BYTE height, BYTE itemCount, BUFFER items);
+LISTBOX* CreateListbox(WINDOW *window, BUFFER name, BYTE x, BYTE y, BYTE width, BYTE height, BYTE itemCount, LISTITEM *listitems);
 
 void _renderListBoxHandler(WINCTRL *control);
 

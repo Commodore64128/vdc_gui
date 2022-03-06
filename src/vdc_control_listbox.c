@@ -10,7 +10,7 @@
 
 #include "vdc_gui.h"
 
-LISTBOX* CreateListbox(WINDOW *window, BUFFER name, BYTE x, BYTE y, BYTE width, BYTE height, BYTE itemCount, BUFFER items)
+LISTBOX* CreateListbox(WINDOW *window, BUFFER name, BYTE x, BYTE y, BYTE width, BYTE height,  BYTE itemCount, LISTITEM *listitems)
 {
 	/* Adds a listBox control to a window. */
 
@@ -30,8 +30,8 @@ LISTBOX* CreateListbox(WINDOW *window, BUFFER name, BYTE x, BYTE y, BYTE width, 
 		//Set defaults
 		listBox->width = width;
 		listBox->height = height;
+		listBox->listitems = listitems;
 		listBox->itemCount = itemCount;
-		listBox->items = items;
 		listBox->selectedItem = 0;
 		listBox->OnChanged = NULL;
 
@@ -49,12 +49,7 @@ void _renderListBoxHandler(WINCTRL *ctrl)
 {
 	LISTBOX *listBox = (LISTBOX *)ctrl->sub;
 	WINDOW *win = listBox->base->parentWindow;
-
-	BYTE c;
-	const char *ptr = listBox->items;
-	char field [ 32 ];
-	int n;
-	int counter = 0;
+	BYTE x;
 
 	int col = win->x + ctrl->x;
 	int row = win->y + ctrl->y;
@@ -63,30 +58,22 @@ void _renderListBoxHandler(WINCTRL *ctrl)
 
 	row++;
 
-	while ( sscanf(ptr, "%31[^,]%n", field, &n) == 1 )
+	for (x=0; x < listBox->itemCount; x++)
 	{
-		if(listBox->selectedItem == counter)
+		if(listBox->selectedItem == x)
 		{
 			if(listBox->base->hasFocus == TRUE)
 				VDC_PrintAt(row, col+1, "*", 1);
 			else
 				VDC_PrintAt(row, col+1, " ", 1);
 
-			VDC_PrintAt(row++, col+2, field, 1);
+			VDC_PrintAt(row++, col+2, (char *)listBox->listitems[x].text, 1);
 		}
 		else
 		{
 			VDC_PrintAt(row, col+1, " ", 0);
-			VDC_PrintAt(row++, col+2, field, 0);
+			VDC_PrintAt(row++, col+2, (char *)listBox->listitems[x].text, 0);
 		}
-
-		ptr += n; 
-
-		if ( *ptr != ',' )
-			break; 
-
-		++ptr;
-		counter++;
 	}
 }
 

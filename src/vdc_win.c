@@ -203,7 +203,10 @@ void ActivateWindow(WINDOW *window)
 {
 	WINCTRL *ctrl = window->control;  // control that has current focus
 	int key=0;
-	
+
+	if(window->control == NULL)
+		return;
+
 	VDC_SetCursorMode(VDC_CURSORMODE_NONE);
 
 	for(;;)
